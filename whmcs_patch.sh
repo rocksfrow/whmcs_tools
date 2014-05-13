@@ -21,18 +21,39 @@ WHMCS_TEMPLATES_C='../whmcs_templates_c'
 
 cd $WHMCS_SOURCE
 
-#copy files to custom paths and remove from source before full copy
-cp -R attachments/* $WHMCS_ATTACHMENTS/.
-rm -rf attachments
-cp -R crons/* $WHMCS_CRONS/.
-rm -rf crons
-cp -R downloads/* $WHMCS_DOWNLOADS/.
-rm -rf downloads
-cp -R templates_c/* $WHMCS_TEMPLATES_C/.
-rm -rf templates_c
+#copy files to custom paths first
+if [ -d attachments ]; then
+  echo "Copying attachments/..."
+  cp -R attachments/* $WHMCS_ATTACHMENTS/.
+  rm -rf attachments
+fi
 
-#rename admin folder then copy remaining files to path
-mv admin $WHMCS_ADMIN
+if [ -d crons ]; then
+  echo "Copying crons/..."
+  cp -R crons/* $WHMCS_CRONS/.
+  rm -rf crons
+fi
+
+if [ -d downloads ]; then
+  echo "Copying downloads/..."
+  cp -R downloads/* $WHMCS_DOWNLOADS/.
+  rm -rf downloads
+fi
+
+if [ -d templates_c ]; then
+  echo "Copying templates_c/..."
+  cp -R templates_c/* $WHMCS_TEMPLATES_C/.
+  rm -rf templates_c
+fi
+
+#rename admin folder if necessary
+if [ ! "$WHMCS_ADMIN" == "admin" ]; then
+  echo "Renaming admin directory..."
+  mv admin $WHMCS_ADMIN
+fi
+
+#copy the rest of the patch
+echo "Copying patch files to path..."
 cp -R * $WHMCS_PATH/.
 
 echo ""
